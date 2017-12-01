@@ -129,12 +129,28 @@ syscall(struct trapframe *tf)
                 err = sys_read(
                         tf->tf_a0,
                         (userptr_t)tf->tf_a1,
-                        tf->tf_a2,
-                        &retval);
+                        tf->tf_a2);
                 break;
-
             /* Project 3:
              * Add more for meld, close, and write . */
+
+            case SYS_write:
+                err = sys_write(
+                        tf->tf_a0,
+                        (userptr_t)tf->tf_a1,
+                        tf->tf_a2);
+                break;
+            case SYS_close:
+                err = sys_close(
+                        tf->tf_a0);
+                break;
+
+            case SYS_meld:
+                err = sys_meld(
+                        (userptr_t)tf->tf_a0,
+			(userptr_t)tf->tf_a1,
+			(userptr_t)tf->tf_a2);
+                break;
 
 	    default:
 		kprintf("Unknown syscall %d\n", callno);

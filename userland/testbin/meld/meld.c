@@ -27,44 +27,38 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _SYSCALL_H_
-#define _SYSCALL_H_
-
-
-#include <cdefs.h> /* for __DEAD */
-struct trapframe; /* from <machine/trapframe.h> */
-
 /*
- * The system call dispatcher.
+ * meld.c
+ *
+ * 	Tests the filesystem by opening, writing to and reading from two
+ * 	user specified files.
+ *
  */
 
-void syscall(struct trapframe *tf);
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <err.h>
 
-/*
- * Support functions.
- */
+int
+main(int argc, char *argv[])
+{
+	int fd;
+	const char* file1;
+	const char* file2;
+	const char* out;
+	(void) argc;
+	(void) argv;
 
-/* Helper for fork(). You write this. */
-void enter_forked_process(struct trapframe *tf);
+	file1 = "file1.txt";
+	file2 = "file2.txt";
+	out = "outputfile.txt";
 
-/* Enter user mode. Does not return. */
-__DEAD void enter_new_process(int argc, userptr_t argv, userptr_t env,
-		       vaddr_t stackptr, vaddr_t entrypoint);
+	fd = meld(file1,file2,out);
+	if (fd<0) {
+		printf("failed\n");
+	}
 
-
-/*
- * Prototypes for IN-KERNEL entry points for system call implementations.
- */
-
-int sys_reboot(int code);
-int sys___time(userptr_t user_seconds, userptr_t user_nanoseconds);
-void sys__exit(int code);
-
-int sys_open(const_userptr_t filename, int flags, mode_t mode, int *retval);
-int sys_read(int fd, userptr_t buf, size_t size);
-int sys_write(int fd, userptr_t buf, size_t size);
-int sys_close(int fd);
-int sys_meld(const_userptr_t pn1,const_userptr_t pn2,const_userptr_t pn3);
-
-
-#endif /* _SYSCALL_H_ */
+	printf("Passed meldtest.\n");
+	return 0;
+}
